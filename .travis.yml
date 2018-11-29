@@ -4,10 +4,14 @@ services:
 before_install:
   - docker build -t nhoxzunbmt/multi-docker -f ./client/Dockerfile.dev ./client
 script:
-  - docker run nhoxzunbmt/multi-docker npm test -- --converage
+  - docker run nhoxzunbmt/multi-docker npm test -- --coverage
 after_success:
   - docker build -t nhoxzunbmt/multi-client ./client
   - docker build -t nhoxzunbmt/multi-nginx ./nginx
   - docker build -t nhoxzunbmt/multi-server ./server
   - docker build -t nhoxzunbmt/multi-worker ./worker
-  
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  - docker push nhoxzunbmt/multi-client
+  - docker push nhoxzunbmt/multi-nginx
+  - docker push nhoxzunbmt/multi-server
+  - docker push nhoxzunbmt/multi-worker
